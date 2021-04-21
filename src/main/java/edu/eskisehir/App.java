@@ -2,26 +2,22 @@ package edu.eskisehir;
 
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 @SuppressWarnings("ALL")
 public class App {
     public static final char[] alfabe = {'A', 'B', 'C', 'Ç', 'D', 'E', 'F', 'G', 'Ğ', 'H', 'İ', 'I', 'J', 'K', 'L',
-            'M', 'N', 'O', 'Ö', 'P', 'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z'};
-    public static int p;
-    public static int q;
+            'M', 'N', 'O', 'Ö', 'P', 'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z',' '};
 
     public static void main(String[] args) {
-        /** başlangıç sayıları */
-
+        /** başlangıç */
         Scanner input = new Scanner(System.in);
         System.out.println("Şifrelemek istediğiniz kelimeyi giriniz: ");
         String girdi = input.nextLine();
         System.out.println("p: ");
-        p = input.nextInt();
+        int p = input.nextInt();
         System.out.println("q: ");
-        q = input.nextInt();
+        int q = input.nextInt();
         System.out.println("e: ");
         int e = input.nextInt();
         int m = p * q;
@@ -30,8 +26,7 @@ public class App {
         char[] harfler = girdi.toUpperCase().toCharArray();
         int[] indexler = new int[harfler.length];
 
-        /** şifreleme adımları */
-
+        /** Girilen kelimenin kaçıncı harf olduklarını çıkarır */
         for (int i = 0; i < harfler.length; i++) {
             for (int j = 0; j < alfabe.length; j++) {
                 if (harfler[i] == alfabe[j]) {
@@ -40,36 +35,34 @@ public class App {
                 }
             }
         }
+        System.out.println("Girilen kelimenin kaçıncı harf oldukları: " + Arrays.toString(indexler));
+
         /** test */
-        for (int i = 0; i < harfler.length; i++) {
-            for (int j = 0; j < alfabe.length; j++) {
-                if (harfler[i] == alfabe[j]) {
-                    System.out.print(j + 1 + " ");
-                }
-            }
-        }
-        System.out.println();
-        /** test */
-        double[] d = new double[indexler.length];
-        double[] b_sayıları = new double[d.length];
+        double[] şifre_index = new double[indexler.length];
+        double[] b_sayıları = new double[şifre_index.length];
         for (int i = 0; i < indexler.length; i++) {
             double a = Math.pow(indexler[i], e);
             double b = (a % m);
             b_sayıları[i] = b;
             double temp = b % alfabe.length;
-            double c = temp - 1;
-            d[i] = c;
+            double c = temp;
+            şifre_index[i] = c;
         }
-        System.out.println(Arrays.toString(d));
-        System.out.println(Arrays.toString(b_sayıları));
+        System.out.println("Üstel fonksiyonumuz: " + Arrays.toString(b_sayıları));
+        System.out.println("Şifrelenmiş mesajın kaçıncı harf olduğu: " + Arrays.toString(şifre_index));
 
-
-        char[] şifre = new char[d.length];
+        char[] şifre = new char[şifre_index.length];
         for (int i = 0; i < indexler.length; i++) {
-            şifre[i] = alfabe[(int) d[i]];
+            if (şifre_index[i]==0){
+                şifre[i] = alfabe[(int) şifre_index[i] ];
+            }else {
+                şifre[i] = alfabe[(int) şifre_index[i] - 1];
+            }
         }
         String girdi2 = String.valueOf(şifre);
         System.out.println("Şifreli hali: " + girdi2);
+
+        System.out.println("----------Şifre çözme adımları----------");
         /** çözme adımları */
         char[] harfler2 = girdi2.toUpperCase().toCharArray();
         int[] indexler2 = new int[harfler.length];
@@ -85,11 +78,10 @@ public class App {
                 sayaç++;
             }
         }
-        System.out.println("d sayısı: " + d_sayısı);
+        System.out.println("d sayısı: " + (int)d_sayısı);
 
         BigInteger[] big_b_sayıları = new BigInteger[b_sayıları.length];
         for (int i = 0; i < b_sayıları.length; i++) {
-
             big_b_sayıları[i] = new BigInteger(String.valueOf(new Double(b_sayıları[i]).longValue()));
         }
         BigInteger big_d_sayısı = new BigInteger(String.valueOf(new Double(d_sayısı).longValue()));
@@ -99,36 +91,21 @@ public class App {
         for (int i = 0; i < b_sayıları.length; i++) {
             temp[i] = big_b_sayıları[i].modPow(big_d_sayısı, big_m);
         }
-        System.out.println(Arrays.toString(temp));
+        BigInteger[] tempMod29 = new BigInteger[big_b_sayıları.length];
+        for (int i = 0; i < tempMod29.length; i++) {
+            tempMod29[i] = temp[i].mod(BigInteger.valueOf(alfabe.length));
+        }
+        System.out.println("Deşifrelenmiş kelimenin mod 29'a göre kaçıncı harf oldukları: " + Arrays.toString(tempMod29));
+        System.out.println("Deşifrelenmiş kelimenin kaçıncı harf oldukları: " + Arrays.toString(temp));
 
         char[] çıktı = new char[temp.length];
         for (int i = 0; i < çıktı.length; i++) {
             çıktı[i] = alfabe[Integer.parseInt(String.valueOf(temp[i].longValue())) - 1];
+            //System.out.print(alfabe[Integer.parseInt(String.valueOf(temp[i].longValue())) - 1]);
         }
-        System.out.println(Arrays.toString(çıktı));
+        //System.out.println();
+        System.out.println("Deşifrelenmiş kelime: " + Arrays.toString(çıktı));
 
 
     }
-    /*public static LinkedList<Integer> generateE(int number) {
-        LinkedList<Integer> sayılar = new LinkedList<>();
-        for (int i = 2; i < number; i++) {
-            if (bigIntegerRelativelyPrime(i, number)) {
-                sayılar.add(i);
-            }
-        }
-        return sayılar;
-    }
-
-    public static boolean bigIntegerRelativelyPrime(int a, int b) {
-        return BigInteger.valueOf(a).gcd(BigInteger.valueOf(b)).equals(BigInteger.ONE);
-    }
-
-    private static boolean isPrime(int inputNum) {
-        if (inputNum <= 3 || inputNum % 2 == 0)
-            return inputNum == 2 || inputNum == 3; //this returns false if number is <=1 & true if number = 2 or 3
-        int divisor = 3;
-        while ((divisor <= Math.sqrt(inputNum)) && (inputNum % divisor != 0))
-            divisor += 2; //iterates through all possible divisors
-        return inputNum % divisor != 0; //returns true/false
-    }*/
 }
