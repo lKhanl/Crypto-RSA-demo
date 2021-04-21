@@ -25,39 +25,40 @@ public class App {
         System.out.println("Şifrelemek istediğiniz kelimeyi giriniz: ");
         String girdi = input.nextLine();
         System.out.print("Bir asal sayı giriniz p: ");
-        int p = input.nextInt();
+        BigInteger p = BigInteger.valueOf(input.nextInt());
         System.out.print("Bir asal sayı daha giriniz q: ");
-        int q = input.nextInt();
-        int φM = (p - 1) * (q - 1);
+        BigInteger q = BigInteger.valueOf(input.nextInt());
+        BigInteger big_φM = (p.subtract(BigInteger.valueOf(1))).multiply((q.subtract(BigInteger.valueOf(1))));
+        int φM = big_φM.intValueExact();
         System.out.println("φM: " + φM);
 
-        ArrayList<Integer> e_sayıları = new ArrayList<>();
+        ArrayList<BigInteger> e_sayıları = new ArrayList<>();
         System.out.print("Olası e sayıları: ");
         for (int i = 2; i < φM; i++) {
             if (ebob(φM, i) == 1) {
-                e_sayıları.add(i);
+                e_sayıları.add(BigInteger.valueOf(i));
                 System.out.print(i + " ");
             }
         }
         System.out.println();
-        int e;
+        BigInteger e;
         while (true) {
             System.out.print("e: ");
-            e = input.nextInt();
+            e = BigInteger.valueOf(input.nextInt());
             if (e_sayıları.contains(e)) {
                 break;
             }
         }
 
-        int m = p * q;
+        BigInteger m = p.multiply(q);
         char[] harfler = girdi.toUpperCase().toCharArray();
-        int[] indexler = new int[harfler.length];
+        BigInteger[] indexler = new BigInteger[harfler.length];
 
         /** Girilen kelimenin kaçıncı harf olduklarını çıkarır */
         for (int i = 0; i < harfler.length; i++) {
             for (int j = 0; j < alfabe.length; j++) {
                 if (harfler[i] == alfabe[j]) {
-                    indexler[i] = j + 1;
+                    indexler[i] = BigInteger.valueOf(j + 1);
                     break;
                 }
             }
@@ -65,14 +66,14 @@ public class App {
         System.out.println("Girilen kelimenin kaçıncı harf oldukları: " + Arrays.toString(indexler));
 
         /** test */
-        double[] şifre_index = new double[indexler.length];
-        double[] b_sayıları = new double[şifre_index.length];
+        BigInteger[] şifre_index = new BigInteger[indexler.length];
+        BigInteger[] b_sayıları = new BigInteger[şifre_index.length];
         for (int i = 0; i < indexler.length; i++) {
-            double a = Math.pow(indexler[i], e);
-            double b = (a % m);
+            BigInteger a = indexler[i].pow(e.intValueExact());
+            BigInteger b = a.mod(m);
             b_sayıları[i] = b;
-            double temp = b % alfabe.length;
-            double c = temp;
+            BigInteger temp = b.mod(BigInteger.valueOf(alfabe.length));
+            BigInteger c = temp;
             şifre_index[i] = c;
         }
         System.out.println("Üstel fonksiyonumuz: " + Arrays.toString(b_sayıları));
@@ -80,10 +81,10 @@ public class App {
 
         char[] şifre = new char[şifre_index.length];
         for (int i = 0; i < indexler.length; i++) {
-            if (şifre_index[i] == 0) {
-                şifre[i] = alfabe[(int) şifre_index[i]];
+            if (şifre_index[i].equals(BigInteger.valueOf(0))) {
+                şifre[i] = alfabe[şifre_index[i].intValueExact()];
             } else {
-                şifre[i] = alfabe[(int) şifre_index[i] - 1];
+                şifre[i] = alfabe[şifre_index[i].subtract(BigInteger.valueOf(1)).intValueExact()];
             }
         }
         String girdi2 = String.valueOf(şifre);
@@ -92,33 +93,33 @@ public class App {
         System.out.println("----------Şifre çözme adımları----------");
         /** çözme adımları */
         char[] harfler2 = girdi2.toUpperCase().toCharArray();
-        int[] indexler2 = new int[harfler.length];
+        BigInteger[] indexler2 = new BigInteger[harfler.length];
 
         /** d sayısını bulmak */
-        double d_sayısı = 0;
-        int sayaç = 1;
+        BigInteger d_sayısı = BigInteger.valueOf(0);
+        BigInteger sayaç = BigInteger.valueOf(1);
         while (true) {
-            d_sayısı = (1 + (φM * sayaç)) / e;
-            if ((1 + (φM * sayaç)) % e == 0) {
+            d_sayısı = big_φM.multiply(sayaç).add(BigInteger.valueOf(1)).divide(e);
+            if (big_φM.multiply(sayaç).add(BigInteger.valueOf(1)).mod(e).equals(BigInteger.valueOf(0))) {
                 break;
             } else {
-                sayaç++;
+                sayaç = sayaç.add(BigInteger.valueOf(1));
             }
         }
-        System.out.println("d sayısı: " + (int) d_sayısı);
+        System.out.println("d sayısı: " + d_sayısı);
 
-        BigInteger[] big_b_sayıları = new BigInteger[b_sayıları.length];
+        /*BigInteger[] big_b_sayıları = new BigInteger[b_sayıları.length];
         for (int i = 0; i < b_sayıları.length; i++) {
             big_b_sayıları[i] = new BigInteger(String.valueOf(new Double(b_sayıları[i]).longValue()));
-        }
-        BigInteger big_d_sayısı = new BigInteger(String.valueOf(new Double(d_sayısı).longValue()));
-        BigInteger big_m = new BigInteger(String.valueOf(new Double(m).longValue()));
+        }*/
+        //BigInteger big_d_sayısı = new BigInteger(String.valueOf(new Double(d_sayısı).longValue()));
+        //BigInteger big_m = new BigInteger(String.valueOf(new Double(m).longValue()));
 
-        BigInteger[] temp = new BigInteger[big_b_sayıları.length];
+        BigInteger[] temp = new BigInteger[b_sayıları.length];
         for (int i = 0; i < b_sayıları.length; i++) {
-            temp[i] = big_b_sayıları[i].modPow(big_d_sayısı, big_m);
+            temp[i] = b_sayıları[i].modPow(d_sayısı, m);
         }
-        BigInteger[] tempMod29 = new BigInteger[big_b_sayıları.length];
+        BigInteger[] tempMod29 = new BigInteger[b_sayıları.length];
         for (int i = 0; i < tempMod29.length; i++) {
             tempMod29[i] = temp[i].mod(BigInteger.valueOf(alfabe.length));
         }
