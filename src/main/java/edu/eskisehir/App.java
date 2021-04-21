@@ -1,28 +1,55 @@
 package edu.eskisehir;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 @SuppressWarnings("ALL")
 public class App {
     public static final char[] alfabe = {'A', 'B', 'C', 'Ç', 'D', 'E', 'F', 'G', 'Ğ', 'H', 'İ', 'I', 'J', 'K', 'L',
-            'M', 'N', 'O', 'Ö', 'P', 'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z',' '};
+            'M', 'N', 'O', 'Ö', 'P', 'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z', ' '};
+
+    public static int ebob(int sayı1, int sayı2) {
+        int ebob = 1;
+        for (int i = 1; i <= sayı1 && i <= sayı2; ++i) {
+            if (sayı1 % i == 0 && sayı2 % i == 0)
+                ebob = i;
+        }
+        return ebob;
+    }
 
     public static void main(String[] args) {
         /** başlangıç */
         Scanner input = new Scanner(System.in);
         System.out.println("Şifrelemek istediğiniz kelimeyi giriniz: ");
         String girdi = input.nextLine();
-        System.out.println("p: ");
+        System.out.print("Bir asal sayı giriniz p: ");
         int p = input.nextInt();
-        System.out.println("q: ");
+        System.out.print("Bir asal sayı daha giriniz q: ");
         int q = input.nextInt();
-        System.out.println("e: ");
-        int e = input.nextInt();
-        int m = p * q;
         int φM = (p - 1) * (q - 1);
+        System.out.println("φM: " + φM);
 
+        ArrayList<Integer> e_sayıları = new ArrayList<>();
+        System.out.print("Olası e sayıları: ");
+        for (int i = 2; i < φM; i++) {
+            if (ebob(φM, i) == 1) {
+                e_sayıları.add(i);
+                System.out.print(i + " ");
+            }
+        }
+        System.out.println();
+        int e;
+        while (true) {
+            System.out.print("e: ");
+            e = input.nextInt();
+            if (e_sayıları.contains(e)) {
+                break;
+            }
+        }
+
+        int m = p * q;
         char[] harfler = girdi.toUpperCase().toCharArray();
         int[] indexler = new int[harfler.length];
 
@@ -53,9 +80,9 @@ public class App {
 
         char[] şifre = new char[şifre_index.length];
         for (int i = 0; i < indexler.length; i++) {
-            if (şifre_index[i]==0){
-                şifre[i] = alfabe[(int) şifre_index[i] ];
-            }else {
+            if (şifre_index[i] == 0) {
+                şifre[i] = alfabe[(int) şifre_index[i]];
+            } else {
                 şifre[i] = alfabe[(int) şifre_index[i] - 1];
             }
         }
@@ -78,7 +105,7 @@ public class App {
                 sayaç++;
             }
         }
-        System.out.println("d sayısı: " + (int)d_sayısı);
+        System.out.println("d sayısı: " + (int) d_sayısı);
 
         BigInteger[] big_b_sayıları = new BigInteger[b_sayıları.length];
         for (int i = 0; i < b_sayıları.length; i++) {
@@ -95,12 +122,12 @@ public class App {
         for (int i = 0; i < tempMod29.length; i++) {
             tempMod29[i] = temp[i].mod(BigInteger.valueOf(alfabe.length));
         }
-        System.out.println("Deşifrelenmiş kelimenin mod 29'a göre kaçıncı harf oldukları: " + Arrays.toString(tempMod29));
         System.out.println("Deşifrelenmiş kelimenin kaçıncı harf oldukları: " + Arrays.toString(temp));
+        System.out.println("Deşifrelenmiş kelimenin mod 30'a göre kaçıncı harf oldukları: " + Arrays.toString(tempMod29));
 
         char[] çıktı = new char[temp.length];
         for (int i = 0; i < çıktı.length; i++) {
-            çıktı[i] = alfabe[Integer.parseInt(String.valueOf(temp[i].longValue())) - 1];
+            çıktı[i] = alfabe[Integer.parseInt(String.valueOf(tempMod29[i].longValue())) - 1];
             //System.out.print(alfabe[Integer.parseInt(String.valueOf(temp[i].longValue())) - 1]);
         }
         //System.out.println();
