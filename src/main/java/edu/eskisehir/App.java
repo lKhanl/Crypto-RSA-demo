@@ -7,8 +7,8 @@ import java.util.Scanner;
 
 @SuppressWarnings("ALL")
 public class App {
-    public static final char[] alfabe = {'A', 'B', 'C', 'Ç', 'D', 'E', 'F', 'G', 'Ğ', 'H', 'İ', 'I', 'J', 'K', 'L',
-            'M', 'N', 'O', 'Ö', 'P', 'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z', ' '};
+    public static final char[] alfabe = {' ','A', 'B', 'C', 'Ç', 'D', 'E', 'F', 'G', 'Ğ', 'H', 'İ', 'I', 'J', 'K', 'L',
+            'M', 'N', 'O', 'Ö', 'P', 'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z' };
 
     public static int ebob(int sayı1, int sayı2) {
         int ebob = 1;
@@ -51,6 +51,7 @@ public class App {
         }
 
         BigInteger m = p.multiply(q);
+        System.out.println("m: " + m);
         char[] harfler = girdi.toUpperCase().toCharArray();
         BigInteger[] indexler = new BigInteger[harfler.length];
 
@@ -58,7 +59,7 @@ public class App {
         for (int i = 0; i < harfler.length; i++) {
             for (int j = 0; j < alfabe.length; j++) {
                 if (harfler[i] == alfabe[j]) {
-                    indexler[i] = BigInteger.valueOf(j + 1);
+                    indexler[i] = BigInteger.valueOf(j);
                     break;
                 }
             }
@@ -88,11 +89,11 @@ public class App {
             }
         }
         String girdi2 = String.valueOf(şifre);
-        System.out.println("Şifreli hali: " + girdi2);
 
         System.out.println("----------Şifre çözme adımları----------");
         /** çözme adımları */
         char[] harfler2 = girdi2.toUpperCase().toCharArray();
+        System.out.println("Şifreli hali: " + Arrays.toString(harfler2));
         BigInteger[] indexler2 = new BigInteger[harfler.length];
 
         /** d sayısını bulmak */
@@ -108,13 +109,6 @@ public class App {
         }
         System.out.println("d sayısı: " + d_sayısı);
 
-        /*BigInteger[] big_b_sayıları = new BigInteger[b_sayıları.length];
-        for (int i = 0; i < b_sayıları.length; i++) {
-            big_b_sayıları[i] = new BigInteger(String.valueOf(new Double(b_sayıları[i]).longValue()));
-        }*/
-        //BigInteger big_d_sayısı = new BigInteger(String.valueOf(new Double(d_sayısı).longValue()));
-        //BigInteger big_m = new BigInteger(String.valueOf(new Double(m).longValue()));
-
         BigInteger[] temp = new BigInteger[b_sayıları.length];
         for (int i = 0; i < b_sayıları.length; i++) {
             temp[i] = b_sayıları[i].modPow(d_sayısı, m);
@@ -128,7 +122,10 @@ public class App {
 
         char[] çıktı = new char[temp.length];
         for (int i = 0; i < çıktı.length; i++) {
-            çıktı[i] = alfabe[Integer.parseInt(String.valueOf(tempMod29[i].longValue())) - 1];
+//            if (tempMod29[i].longValue() == 0) {
+//                çıktı[i] = alfabe[Integer.parseInt(String.valueOf(tempMod29[i].longValue()))];
+//            } else
+                çıktı[i] = alfabe[Integer.parseInt(String.valueOf(tempMod29[i].longValue()))];
             //System.out.print(alfabe[Integer.parseInt(String.valueOf(temp[i].longValue())) - 1]);
         }
         //System.out.println();
